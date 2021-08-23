@@ -6,10 +6,13 @@ import string
 
 filename = "fighters.csv"
 csv_writer = csv.writer(open(filename, 'w'))
+csv_writer.writerow(['Name', 'Record', 'Height', 'Weight', 'Reach', 'STANCE', 'DOB', 'SLpM', 'Str.Acc', 'SApM', 'Str.Def', 'TD Avg.', 'TD Acc.', 'TD Def.', 'Sub. Avg'])
 
+data = []
 alphabet = string.ascii_lowercase
 for letter in alphabet:
-    url = "http://ufcstats.com/statistics/fighters?char={letter}&page=all"
+    print(letter)
+    url = "http://ufcstats.com/statistics/fighters?char=" + letter + "&page=all"
     page = requests.get(url)
     soup = BeautifulSoup(page.text, 'html.parser')
 
@@ -23,26 +26,26 @@ for letter in alphabet:
     for i in fighterurls:
         fighterurl = i
         fighterpage = requests.get(fighterurl)
-        fightersoup = BeautifulSoup(fighterpage.text, 'html.parser')
+        fightersoup = BeautifulSoup(fighterpage.text, 'html.parser').section
         #so maybe make columns in the csv file and fill them based on the titles of the li blocks?
-        """
-        for info in fightersoup.find_all('li'):
-            #info.get_text().remove('/n')
-            fighter = info.text.replace("\n", "").replace("', '", "").replace("    ", "")
-            fighterData.append(fighter)
-            #fighterData.append(info.contents)
-        print(fighterData)
-        """
+        #find a way of extracting the stats
+        #write them into a csv file
         for fighter in fightersoup.find_all('h2'):
-            #info.get_text().remove('/n') 'class="b-content__title-highlight"'
+            #'class="b-content__title-highlight"'
             name = fighter.text.replace("   ", "").replace("\n", "")
             print(name)
             fighterData.append(name)
             for info in fightersoup.find_all('li'):
                 stats = info.text.replace("\n", "").replace("', '", "").replace("    ", "")
-                print(stats)
+                #writerow instead of appending, separate all the stats
+                #print(stats)
                 fighterData.append(stats)
-        #print(fighterData)        
-
-    #now put that into a csv file
+        fighterData.append("\n")
+    #i need to append the fighterData to something
+    data.append(fighterData)
+    #print(fighterData)   
+#fighterData.to_csv('fighters.csv')
+print(data);      
+csv_writer.close() #not sure if this is gonna work???
+#now put that into a csv file
 
