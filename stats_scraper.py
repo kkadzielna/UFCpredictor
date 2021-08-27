@@ -8,6 +8,7 @@ filename = "fighters.csv"
 csv_writer = csv.writer(open(filename, 'w'))
 csv_writer.writerow(['Name', 'Record', 'Height', 'Weight', 'Reach', 'STANCE', 'DOB', 'SLpM', 'Str.Acc', 'SApM', 'Str.Def', 'TD Avg.', 'TD Acc.', 'TD Def.', 'Sub. Avg'])
 
+count = 0
 data = []
 alphabet = string.ascii_lowercase
 for letter in alphabet:
@@ -27,25 +28,29 @@ for letter in alphabet:
         fighterurl = i
         fighterpage = requests.get(fighterurl)
         fightersoup = BeautifulSoup(fighterpage.text, 'html.parser').section
-        #so maybe make columns in the csv file and fill them based on the titles of the li blocks?
-        #find a way of extracting the stats
-        #write them into a csv file
+
         for fighter in fightersoup.find_all('h2'):
             #'class="b-content__title-highlight"'
             name = fighter.text.replace("   ", "").replace("\n", "")
             print(name)
+            #writerow name and record
             fighterData.append(name)
             for info in fightersoup.find_all('li'):
                 stats = info.text.replace("\n", "").replace("', '", "").replace("    ", "")
                 #writerow instead of appending, separate all the stats
-                #print(stats)
+                print(stats)
                 fighterData.append(stats)
         fighterData.append("\n")
-    #i need to append the fighterData to something
-    data.append(fighterData)
+        #writerow fighterData
+        #i need to append the fighterData to something
+        data.append(fighterData)
+        csv_writer.writerow(fighterData)
+        fighterData = []
+
     #print(fighterData)   
 #fighterData.to_csv('fighters.csv')
-print(data);      
-csv_writer.close() #not sure if this is gonna work???
+#gets only one fighter per letter for some reason
+#csv_writer.writerows(data)
+print(data)
 #now put that into a csv file
 
